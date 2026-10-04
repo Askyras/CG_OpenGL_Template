@@ -1,0 +1,9 @@
+glew-2.3.1
+- edited glew/build/cmake/CMakeLists.txt to remove unnecessary targets, leaving only the static library
+
+glm-1.0.3
+
+imgui-1.92.9b
+
+SDL3-3.4.16
+- deleted visual studio project files from SDL3/src/hidapi/windows to stop them from cluttering the main solution
