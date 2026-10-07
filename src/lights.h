@@ -2,7 +2,7 @@
 
 #include "CG/buffer.h"
 
-#include "glm/vec3.hpp"
+#include "glm/glm.hpp"
 #include "GL/glew.h"
 
 #include <vector>

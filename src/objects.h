@@ -26,6 +26,7 @@ protected:
 public:
     MeshObject(const std::string& name = "Unnamed")
         : CG::SceneObject(name) {}
+    ~MeshObject() = default;
 
     void init() override
     {
@@ -55,12 +56,12 @@ public:
         glUniform1i(glGetUniformLocation(*shader, "has_texture"), texture ? 1 : 0);
         if (texture) {
             glActiveTexture(GL_TEXTURE0);
-            glBindTexture(texture ? texture->target : GL_TEXTURE_2D, texture ? texture->tex_id : 0);
+            glBindTexture(texture->target, texture->tex_id);
             glUniform1i(glGetUniformLocation(*shader, "tex"), 0);
         }
 
         glUniform4f(glGetUniformLocation(*shader, "color"), tint_color.r, tint_color.g, tint_color.b, tint_color.a);
-        glUniform1i(glGetUniformLocation(*shader, "debug_mode"), (int)debug_mode);
+        glUniform1i(glGetUniformLocation(*shader, "debug_mode"), debug_mode);
 
         glUniformMatrix4fv(glGetUniformLocation(*shader, "model"), 1, GL_FALSE, glm::value_ptr(world_matrix));
         glUniformMatrix4fv(glGetUniformLocation(*shader, "view"), 1, GL_FALSE, glm::value_ptr(cam.view));
@@ -81,7 +82,7 @@ public:
         ImGui::SetNextItemWidth(200);
         ImGui::ColorEdit4("Tint Color", glm::value_ptr(tint_color));
         ImGui::SetNextItemWidth(200);
-        ImGui::Combo("Debug view", (int*)&debug_mode, "None\0Normals\0Texcoords\0");
+        ImGui::Combo("Debug view", &debug_mode, "None\0Normals\0Texcoords\0");
     }
 };
 
@@ -94,6 +95,7 @@ public:
     inline static LightsUniformBuffer* lights_buffer;
 
     using MeshObject::MeshObject;
+    ~LitMeshObject() = default;
 
     void init() override
     {
@@ -109,8 +111,8 @@ public:
         defines["#MAX_LIGHTS"] = lights_buffer->max_lights;
         if (mesh && mesh->vbos[CG::BufferIndex_Colors] != 0)
             defines["#VERTEX_COLOR"] = "";
-            if (texture)
-                defines["#TEXTURED"] = "";
+        if (texture)
+            defines["#TEXTURED"] = "";
         defines["#DEBUG"] = "";
         shader = std::make_shared<CG::ShaderProgram>(
             CG::Shader(GL_VERTEX_SHADER, "shaders/mesh.vert.glsl", defines),
@@ -138,7 +140,7 @@ public:
         }
 
         glUniform4f(glGetUniformLocation(*shader, "color"), tint_color.r, tint_color.g, tint_color.b, tint_color.a);
-        glUniform1i(glGetUniformLocation(*shader, "debug_mode"), (int)debug_mode);
+        glUniform1i(glGetUniformLocation(*shader, "debug_mode"), debug_mode);
         glUniform3f(glGetUniformLocation(*shader, "ka"), ka.r, ka.g, ka.b);
         glUniform3f(glGetUniformLocation(*shader, "kd"), kd.r, kd.g, kd.b);
         glUniform3f(glGetUniformLocation(*shader, "ks"), ks.r, ks.g, ks.b);
@@ -169,7 +171,7 @@ public:
         ImGui::SetNextItemWidth(200);
         ImGui::ColorEdit3("ks", glm::value_ptr(ks));
         ImGui::SetNextItemWidth(200);
-        ImGui::Combo("Debug view", (int*)&debug_mode, "None\0Normals\0Texcoords\0Unlit\0");
+        ImGui::Combo("Debug view", &debug_mode, "None\0Normals\0Texcoords\0Unlit\0");
     }
 };
 
@@ -177,6 +179,7 @@ public:
 class BillboardObject : public MeshObject {
 public:
     using MeshObject::MeshObject;
+    ~BillboardObject() = default;
 
     void init() override
     {
@@ -258,6 +261,7 @@ public:
         light_index = lights_buffer->lights.size();
         lights_buffer->lights.push_back(new_light);
     }
+    ~LightSource() = default;
 
     void init() override
     {
@@ -338,6 +342,7 @@ public:
         glGenVertexArrays(1, &mesh.vao);
         mesh.index_count = 12;
     }
+    ~InfiniteGrid() = default;
 
     void init() override
     {

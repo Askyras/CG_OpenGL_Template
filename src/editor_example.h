@@ -17,6 +17,7 @@ public:
 	bool freeze_movement = false;
 
 	EditorApp(const char* title = "3D Editor", int width = 1920, int height = 1080);
+	~EditorApp() = default;
 
 	void update(double dt) override;
 

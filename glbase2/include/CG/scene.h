@@ -41,6 +41,7 @@ namespace CG
     public:
         SceneObject(const std::string& name = "Unnamed")
             : name(name) {}
+        virtual ~SceneObject() {}
 
         SceneObject* add_child(std::unique_ptr<SceneObject>&& child) {
             child->parent = this;
